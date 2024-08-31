@@ -3,6 +3,7 @@
 ## requirement
 
 * Arch Linux
+    * zsh
     * Neovim
     * VSCode  
     * xdg-desktop-portal
@@ -19,4 +20,10 @@
 
 ## usage
 
-copy files to `~/.config/hypr/`
+1. copy files to `~/.config/hypr/`
+2. backup ~./.zshrc && add symlink
+
+```shell
+ln -sf ~/.config/zsh/.zshrc ~/.zshrc && source ~/.zshrc
+```
+
