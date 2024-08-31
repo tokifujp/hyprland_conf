@@ -1,0 +1,16 @@
+# concole lang
+export LANG=en_US.utf8
+
+# env vars
+# export GTK_USE_PORTA=1
+# export GDK_DEBUG=portals
+
+# $PATH
+export PATH="/usr/lib/snapd/bin/:$PATH"
+export PATH="/var/lib/snapd/snap/bin:$PATH"
+export PATH="/home/tokifujp/.local/bin:$PATH"
+
+## wayland
+export XDG_DATA_DIRS="$XDG_DATA_HOME:/usr/local/share/:/usr/share/"
+export XDG_DATA_DIR="$XDG_DATA_HOME:/usr/local/share/:/usr/share/"
+export GSETTINGS_SCHEMA_DIR="/usr/share/glib-2.0/schemas"
