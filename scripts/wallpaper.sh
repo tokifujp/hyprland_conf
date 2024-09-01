@@ -1,17 +1,17 @@
 #!/bin/bash
-#                _ _
-# __      ____ _| | |_ __   __ _ _ __   ___ _ __
-# \ \ /\ / / _` | | | '_ \ / _` | '_ \ / _ \ '__|
-#  \ V  V / (_| | | | |_) | (_| | |_) |  __/ |
-#   \_/\_/ \__,_|_|_| .__/ \__,_| .__/ \___|_|
-#                   |_|         |_|
-#
-# -----------------------------------------------------
+#                _ _                              
+# __      ____ _| | |_ __   __ _ _ __   ___ _ __  
+# \ \ /\ / / _` | | | '_ \ / _` | '_ \ / _ \ '__| 
+#  \ V  V / (_| | | | |_) | (_| | |_) |  __/ |    
+#   \_/\_/ \__,_|_|_| .__/ \__,_| .__/ \___|_|    
+#                   |_|         |_|               
+#  
+# ----------------------------------------------------- 
 # Check to use wallpaper cache
-# -----------------------------------------------------
+# ----------------------------------------------------- 
 
 use_cache=0
-if [ -f ~/dotfiles/.settings/wallpaper_cache ] ;then
+if [ -f ~/.config/ml4w/settings/wallpaper_cache ] ;then
     use_cache=1
 fi
 
@@ -21,18 +21,19 @@ else
     echo ":: Wallpaper Cache disabled"
 fi
 
-# -----------------------------------------------------
+# ----------------------------------------------------- 
 # Set defaults
-# -----------------------------------------------------
+# ----------------------------------------------------- 
 
 force_generate=0
-generated_versions="$HOME/.cache/ml4w-wallpaper-generated"
-cache_file="$HOME/.cache/current_wallpaper"
-blurred_wallpaper="$HOME/.cache/blurred_wallpaper.png"
-square_wallpaper="$HOME/.cache/square_wallpaper.png"
-rasi_file="$HOME/.cache/current_wallpaper.rasi"
-blur_file="$HOME/dotfiles/.settings/blur.sh"
+generated_versions="$HOME/.config/ml4w/cache/wallpaper-generated"
+cache_file="$HOME/.config/ml4w/cache/current_wallpaper"
+blurred_wallpaper="$HOME/.config/ml4w/cache/blurred_wallpaper.png"
+square_wallpaper="$HOME/.config/ml4w/cache/square_wallpaper.png"
+rasi_file="$HOME/.config/ml4w/cache/current_wallpaper.rasi"
+blur_file="$HOME/.config/ml4w/settings/blur.sh"
 default_wallpaper="$HOME/wallpaper/default.jpg"
+wallpaper_effect="$HOME/.config/ml4w/settings/wallpaper-effect.sh"
 blur="50x30"
 blur=$(cat $blur_file)
 
@@ -41,9 +42,9 @@ if [ ! -d $generated_versions ] ;then
     mkdir $generated_versions
 fi
 
-# -----------------------------------------------------
+# ----------------------------------------------------- 
 # Get selected wallpaper
-# -----------------------------------------------------
+# ----------------------------------------------------- 
 
 if [ -z $1 ] ;then
     if [ -f $cache_file ] ;then
@@ -58,9 +59,9 @@ used_wallpaper=$wallpaper
 echo ":: Setting wallpaper with original image $wallpaper"
 tmp_wallpaper=$wallpaper
 
-# -----------------------------------------------------
+# ----------------------------------------------------- 
 # Copy path of current wallpaper to cache file
-# -----------------------------------------------------
+# ----------------------------------------------------- 
 
 if [ ! -f $cache_file ] ;then
     touch $cache_file
@@ -68,18 +69,18 @@ fi
 echo "$wallpaper" > $cache_file
 echo ":: Path of current wallpaper copied to $cache_file"
 
-# -----------------------------------------------------
+# ----------------------------------------------------- 
 # Get wallpaper filename
-# -----------------------------------------------------
+# ----------------------------------------------------- 
 wallpaper_filename=$(basename $wallpaper)
 echo ":: Wallpaper Filename: $wallpaper_filename"
 
-# -----------------------------------------------------
+# ----------------------------------------------------- 
 # Wallpaper Effects
 # -----------------------------------------------------
 
-if [ -f $HOME/dotfiles/.settings/wallpaper-effect.sh ] ;then
-    effect=$(cat $HOME/dotfiles/.settings/wallpaper-effect.sh)
+if [ -f $wallpaper_effect ] ;then
+    effect=$(cat $wallpaper_effect)
     if [ ! "$effect" == "off" ] ;then
         used_wallpaper=$generated_versions/$effect-$wallpaper_filename
         if [ -f $generated_versions/$effect-$wallpaper_filename ] && [ "$force_generate" == "0" ] && [ "$use_cache" == "1" ] ;then
@@ -95,39 +96,38 @@ if [ -f $HOME/dotfiles/.settings/wallpaper-effect.sh ] ;then
     fi
 fi
 
-# -----------------------------------------------------
+# ----------------------------------------------------- 
 # Execute pywal
-# -----------------------------------------------------
+# ----------------------------------------------------- 
 
 echo ":: Execute pywal with $used_wallpaper"
 wal -q -i $used_wallpaper
 source "$HOME/.cache/wal/colors.sh"
 
-
-# -----------------------------------------------------
+# ----------------------------------------------------- 
 # Write hyprpaper.conf
 # -----------------------------------------------------
 
 echo ":: Setting wallpaper with $used_wallpaper"
-killall -e hyprpaper &
-sleep 1;
-wal_tpl=$(cat $HOME/dotfiles/.settings/hyprpaper.tpl)
+killall -e hyprpaper & 
+sleep 1; 
+wal_tpl=$(cat $HOME/.config/ml4w/settings/hyprpaper.tpl)
 output=${wal_tpl//WALLPAPER/$used_wallpaper}
 echo "$output" > $HOME/.config/hypr/hyprpaper.conf
 hyprpaper & > /dev/null 2>&1
 
-# -----------------------------------------------------
+# ----------------------------------------------------- 
 # Reload Waybar
 # -----------------------------------------------------
-~/dotfiles/waybar/launch.sh
+~/.config/waybar/launch.sh
 
-# -----------------------------------------------------
+# ----------------------------------------------------- 
 # Reload AGS
 # -----------------------------------------------------
 killall ags
 ags &
 
-# -----------------------------------------------------
+# ----------------------------------------------------- 
 # Created blurred wallpaper
 # -----------------------------------------------------
 
@@ -141,16 +141,16 @@ if [ ! "$blur" == "0x0" ] ;then
 fi
 cp $generated_versions/blur-$blur-$wallpaper_filename.png $blurred_wallpaper
 
-# -----------------------------------------------------
+# ----------------------------------------------------- 
 # Create rasi file
-# -----------------------------------------------------
+# ----------------------------------------------------- 
 
 if [ ! -f $rasi_file ] ;then
     touch $rasi_file
 fi
 echo "* { current-image: url(\"$blurred_wallpaper\", height); }" > "$rasi_file"
 
-# -----------------------------------------------------
+# ----------------------------------------------------- 
 # Created square wallpaper
 # -----------------------------------------------------
 
